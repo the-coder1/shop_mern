@@ -30,26 +30,25 @@ export default function InputArray ({ values, name, type, placeholder, icon, err
                 icon={icon}
                 error={error?.[index]}
                 textAlign={align}
-                children={
-                  <Button
-                    onClick={() => values.length > 1 && remove(index)}
-                    border={error?.[index] ? "2px" : "1px"}
-                    color={error?.[index] ? "red.500" : "gray.700"}
-                    borderRadius="md"
-                    ml={2}
-                    boxShadow="sm"
-                    bg="none"
-                    transition="0.25s"
-                    _hover={{
-                      transform: "scale(1.05)",
-                      bg: error?.[index] ? "red.200" : "gray.400",
-                      boxShadow: "md"
-                    }}
-                  >
-                    Delete
-                  </Button>
-                }
-              />
+              >
+                <Button
+                  onClick={() => values.length > 1 && remove(index)}
+                  border={error?.[index] ? "2px" : "1px"}
+                  color={error?.[index] ? "red.500" : "gray.700"}
+                  borderRadius="md"
+                  ml={2}
+                  boxShadow="sm"
+                  bg="none"
+                  transition="0.25s"
+                  _hover={{
+                    transform: "scale(1.05)",
+                    bg: error?.[index] ? "red.200" : "gray.400",
+                    boxShadow: "md"
+                  }}
+                >
+                  Delete
+                </Button>
+              </InputForm>
             </Box>
           ))}
           <Button
