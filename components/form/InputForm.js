@@ -1,11 +1,10 @@
-import { Box, Button, FormControl, FormErrorMessage, Icon, Input, InputGroup, InputLeftElement, InputRightElement, useColorModeValue } from "@chakra-ui/react"
+import { Box, Button, FormControl, FormErrorMessage, Icon, Input, InputGroup, InputLeftElement, InputRightElement } from "@chakra-ui/react"
 import { ErrorMessage, Field } from "formik"
 import { useState } from "react"
 import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs"
 
-export default function InputForm ({ name, type, placeholder, as, size, icon, error, children, ...props }) {
+export default function InputForm ({ children, name, type, placeholder, as, size, icon, error, ...props }) {
   const [show, setShow] = useState(false)
-  const theme = useColorModeValue("purple.400", "purple.600")
 
   return (
     <FormControl 
@@ -16,11 +15,9 @@ export default function InputForm ({ name, type, placeholder, as, size, icon, er
     >
       <Box display="flex">
         <InputGroup>
-          <InputLeftElement
-            children={
-              <Icon as={icon} w={6} h={6} ml={1} color={error ? "red.500" : "purple.500"} />
-            }
-          />
+          <InputLeftElement>
+            <Icon as={icon} w={6} h={6} ml={1} color={error ? "red.500" : "purple.500"} />
+          </InputLeftElement>
           <Field
             name={name}
             type={show ? 'text' : type}

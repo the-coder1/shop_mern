@@ -36,7 +36,7 @@ function Content() {
     if (user?.error) {
       setMessage(user.error)
     }
-  }, [user])
+  }, [user, router])
 
   const registerUser = (values) => {
     mutate('/api/user', () =>

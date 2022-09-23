@@ -1,7 +1,7 @@
 import { FormControl, InputGroup, InputLeftElement, Icon, Input, FormErrorMessage, Box } from "@chakra-ui/react"
 import { ErrorMessage, Field } from "formik"
 
-export default function InputNumber ({ label, name, error, icon, children, ...props }) {
+export default function InputNumber ({ children, label, name, error, icon, ...props }) {
   return (
     <FormControl 
       isInvalid={error} 
@@ -11,11 +11,9 @@ export default function InputNumber ({ label, name, error, icon, children, ...pr
     >
       <Box display="flex">
         <InputGroup>
-          <InputLeftElement
-            children={
-              <Icon as={icon} w={6} h={6} ml={1} color={error ? "red.500" : "gary.700"} />
-            }
-          />
+          <InputLeftElement>
+            <Icon as={icon} w={6} h={6} ml={1} color={error ? "red.500" : "purple.500"} />
+          </InputLeftElement>
           <Field
             name={name}
             type="text"
@@ -40,7 +38,6 @@ export default function InputNumber ({ label, name, error, icon, children, ...pr
             }}
           />
         </InputGroup>
-        {children}
       </Box>
       <ErrorMessage name={name}>
         {msg => <FormErrorMessage>{msg}</FormErrorMessage>}

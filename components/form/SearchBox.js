@@ -20,11 +20,9 @@ export default function SearchBox({ route, ...props }) {
       as="form"
       onSubmit={handleSearch}
     >
-      <InputLeftElement
-        children={
-          <Icon as={BsSearch} w={6} h={6} ml={1} color={"gray.700"} />
-        }
-      />
+      <InputLeftElement>
+        <Icon as={icon} w={6} h={6} ml={1} color={error ? "red.500" : "purple.500"} />
+      </InputLeftElement>
       <Input
         name="search"
         type="search"

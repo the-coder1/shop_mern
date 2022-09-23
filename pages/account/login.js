@@ -19,7 +19,7 @@ export const loginUserSchema = yup.object().shape({
 
 function Content() {
   const router = useRouter()
-  const { user, loading, error } = useUser()
+  const { user, loading } = useUser()
   const { mutate } = useSWRConfig()
   const [message, setMessage] = useState()
 
@@ -30,7 +30,7 @@ function Content() {
     if (user?.error) {
       setMessage(user.error)
     }
-  }, [user])
+  }, [user, router])
 
   const loginUser = (values) => {
     mutate('/api/user', () => 

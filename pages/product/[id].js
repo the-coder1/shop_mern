@@ -327,9 +327,8 @@ function Content({ id, data }) {
   
           <Flex direction="column" w={["90%", "75%", "60%", "50%", "40%"]}>
             {user && data.reviews.map((review, index) => (
-              <SlideFade in={review} offsetY={-50}>
+              <SlideFade in={review} offsetY={-50} key={index}>
                 <Box 
-                  key={index}
                   bg={background}
                   boxShadow="lg"
                   borderRadius="xl"
