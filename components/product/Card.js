@@ -14,7 +14,7 @@ export default function Card({ value, width, height, dir, remove, addToCart }) {
         bg={background}
         boxShadow="md"
         borderRadius="xl"
-        direction={dir ? dir : ["column", "row"]}
+        direction={dir ? dir : ["row", "row"]}
         align="center"
         mx={[1, 3, 5]}
         my={dir ? 5 : 2}
@@ -33,7 +33,7 @@ export default function Card({ value, width, height, dir, remove, addToCart }) {
       >
         <Link href={`/product/${value._id}`} passHref>
           <Flex
-            direction={dir ? dir : ["column", "row"]}
+            direction={dir ? dir : ["row", "row"]}
             align="center"
           >
             <BoxImage
@@ -62,7 +62,7 @@ export default function Card({ value, width, height, dir, remove, addToCart }) {
         </Link>
         {!dir && (
           <Flex 
-            direction={["row", "column"]} 
+            direction={["column", "column"]} 
             justify="space-around" 
             w={["100%"]}
             mt={[2, 0]}
