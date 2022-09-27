@@ -5,7 +5,7 @@ export default function SelectForm({ name, error, children, value }) {
   return (
     <FormControl 
       isInvalid={error} 
-      my={3}  
+      my={2}  
       w={["90%", "85%", "80%", "75%", "70%"]}
     >
       <Box display="flex">
@@ -16,6 +16,7 @@ export default function SelectForm({ name, error, children, value }) {
           border="1px"
           borderColor="purple.500"
           borderRadius="xl"
+          size="sm"
           _hover={{
             borderColor: "purple.500"
           }}
@@ -34,7 +35,7 @@ export default function SelectForm({ name, error, children, value }) {
         {children}
       </Box>
       <ErrorMessage name={name}>
-        {msg => <FormErrorMessage>{msg}</FormErrorMessage>}
+        {msg => <FormErrorMessage ml={2}>{msg}</FormErrorMessage>}
       </ErrorMessage>
     </FormControl>
   )

@@ -1,6 +1,6 @@
 import useSWR, { useSWRConfig } from "swr";
 import Layout from "../../layout/Layout";
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Container, Flex, Heading, Icon, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SlideFade, Text, Textarea, useColorModeValue, useDisclosure, useMediaQuery } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Container, Flex, Heading, Icon, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SlideFade, Text, Textarea, Tooltip, useColorModeValue, useDisclosure, useMediaQuery } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { Form, Formik } from "formik";
 import * as yup from "yup"
@@ -30,6 +30,7 @@ function Content({ id, data }) {
   const { data: wish } = useSWR(id && `/api/wish/${id}`)
   const { mutate } = useSWRConfig()
   const [showID, setShowID] = useState(false)
+  const [postComment, setPostComment] = useState(false)
 
   const [smallDevice] = useMediaQuery("(min-width: 30em)")
 
@@ -78,17 +79,30 @@ function Content({ id, data }) {
                   my={3}
                   boxShadow="md"
                 />
-                <Flex w="100%">
+                <Flex 
+                  w="100%"
+                  justify="space-evenly"
+                >
                   <>
-                    <Button 
-                      variant="outline"
-                      flex={1}
-                      mr={2}
-                      onClick={onOpen}
-                      disabled={data.stock === 0}
+                    <Tooltip 
+                      hasArrow 
+                      label={user?.auth ? "You must have an account!" : data?.stock === 0 ? "Sold out!" : "Add to wish list!"} 
+                      shouldWrapChildren 
+                      borderRadius="xl"
+                      boxShadow="md"
+                      p={2}
                     >
-                      <Icon as={BsCartPlus} w={5} h={5} />
-                    </Button>
+                      <Button 
+                        variant="outline"
+                        mr={2}
+                        onClick={onOpen}
+                        isDisabled={user?.auth ? true : data?.stock === 0 ? true : false}
+                        flex={1}
+                        w={[75, , 100, 125]}
+                      >
+                        <Icon as={BsCartPlus} w={5} h={5} />
+                      </Button>
+                    </Tooltip>
                     <Modal 
                       isOpen={isOpen} 
                       onClose={onClose} 
@@ -130,19 +144,30 @@ function Content({ id, data }) {
                       </ModalContent>
                     </Modal>
                   </>
-                  <Button 
-                    variant="outline"
-                    ml={2}
-                    onClick={() => {
-                      mutate(id && `/api/wish/${id}`, () =>
-                        fetcher(id && `/api/wish/${id}`, {
-                          method: wish?.found ? 'DELETE' : 'PUT',
-                        })
-                      );
-                    }}
+                  <Tooltip 
+                    hasArrow 
+                    label={user?.auth ? "You must have an account!" : "Add to wish list!"} 
+                    shouldWrapChildren 
+                    borderRadius="xl"
+                    boxShadow="md"
+                    p={2}
                   >
-                    <Icon as={wish?.found ? BsFillHeartFill : BsHeart} w={5} h={5} />
-                  </Button>
+                    <Button 
+                      variant="outline"
+                      ml={2}
+                      onClick={() => {
+                        mutate(id && `/api/wish/${id}`, () =>
+                          fetcher(id && `/api/wish/${id}`, {
+                            method: wish?.found ? 'DELETE' : 'PUT',
+                          })
+                        );
+                      }}
+                      isDisabled={user?.auth ? true : false}
+                      w={[75, , 100, 125]}
+                    >
+                      <Icon as={wish?.found ? BsFillHeartFill : BsHeart} w={5} h={5} />
+                    </Button>
+                  </Tooltip>
                 </Flex>
               </Flex>
               
@@ -292,39 +317,6 @@ function Content({ id, data }) {
             </Flex>
           </SlideFade>
 
-          {user && data.reviews.find(review => review.user !== user._id) && (
-            <Formik
-              initialValues={{
-                rating: 0,
-                comment: ""
-              }}
-              validationSchema={commentSchema}
-              onSubmit={(values) => createComment(values)}
-            >
-              {({ values, errors, touched }) => (
-                <SlideFade in={user} offsetY={-50}>
-                  <FormContainer>
-                    <SelectForm
-                      name="rating"
-                      value={values.rating}
-                      icon={BsLock}
-                      error={errors.rating && touched.rating && errors.rating}
-                    />
-                    <InputForm
-                      name="comment"
-                      as={Textarea}
-                      type="text"
-                      placeholder="Post a comment..."
-                      icon={BsFillChatTextFill}
-                      error={errors.comment && touched.comment && errors.comment}
-                    />
-                    <Button type="submit" mt={3}>Post</Button>
-                  </FormContainer>
-                </SlideFade>
-              )}
-            </Formik>
-          )}
-  
           <Flex direction="column" w={["90%", "75%", "60%", "50%", "40%"]}>
             {user && data.reviews.map((review, index) => (
               <SlideFade in={review} offsetY={-50} key={index}>
@@ -339,7 +331,7 @@ function Content({ id, data }) {
                 >
                   <Flex align="center" mb={2} wrap="wrap">
                     {showID ? (
-                      <Text>
+                      <Text mr={2}>
                         <Icon as={BsHash} w={5} h={5} mb={-1} />{review.user}
                       </Text>
                     ) : (
@@ -359,6 +351,75 @@ function Content({ id, data }) {
               </SlideFade>
             ))}
           </Flex>
+          {console.log(postComment)}
+
+          {user?.auth ? (
+            <SlideFade in={user} offsetY={-50}>
+              <Box 
+                bg={background}
+                boxShadow="lg"
+                borderRadius="xl"
+                m={3}
+                p={5}
+                color="purple.500"
+                w={["90%", "75%", "60%", "50%", "40%"]}
+              >
+                <Text fontWeight="500" m={2} p={2}>You must have an account to add your wishes to the list!</Text>
+                <Link href="/account/register" passHref>
+                  <Button>Create an account!</Button>
+                </Link>
+              </Box>
+            </SlideFade>
+          ) : !postComment ? (
+            <SlideFade in={user} offsetY={-50}>
+              <Box 
+                bg={background}
+                boxShadow="lg"
+                borderRadius="xl"
+                m={3}
+                p={5}
+                color="purple.500"
+                w={["90%", "75%", "60%", "50%", "40%"]}
+              >
+                <Button onClick={() => setPostComment(!postComment)}>Post a comment</Button>
+              </Box>
+            </SlideFade>
+          ) : (
+            <SlideFade in={user} offsetY={-50}>
+              <Formik
+                initialValues={{
+                  rating: 0,
+                  comment: ""
+                }}
+                validationSchema={commentSchema}
+                onSubmit={(values) => createComment(values)}
+              >
+                {({ values, errors, touched }) => (
+                  <SlideFade in={user} offsetY={-50}>
+                    <FormContainer align="start" mx={3} p={5}>
+                      <SelectForm
+                        name="rating"
+                        value={values.rating}
+                        icon={BsLock}
+                        error={errors.rating && touched.rating && errors.rating}
+                      />
+                      <InputForm
+                        name="comment"
+                        as={Textarea}
+                        type="text"
+                        placeholder="Post a comment..."
+                        icon={BsFillChatTextFill}
+                        error={errors.comment && touched.comment && errors.comment}
+                        size="sm"
+                      />
+                      <Button type="submit" mt={2}>Post</Button>
+                    </FormContainer>
+                  </SlideFade>
+                )}
+              </Formik>
+            </SlideFade>
+          )}
+
         </Flex>
       </Container>
     )

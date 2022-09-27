@@ -9,7 +9,7 @@ export default function InputForm ({ children, name, type, placeholder, as, size
   return (
     <FormControl 
       isInvalid={error} 
-      my={3}
+      my={2}
       w={["90%", "85%", "80%", "75%", "70%"]}
       {...props}
     >
@@ -29,6 +29,8 @@ export default function InputForm ({ children, name, type, placeholder, as, size
             border="1px"
             borderColor="purple.500"
             borderRadius="xl"
+            size={size}
+            
             _hover={{
               borderColor: "purple.500"
             }}
@@ -52,7 +54,7 @@ export default function InputForm ({ children, name, type, placeholder, as, size
         {children}
       </Box>
       <ErrorMessage name={name}>
-        {msg => <FormErrorMessage>{msg}</FormErrorMessage>}
+        {msg => <FormErrorMessage ml={2}>{msg}</FormErrorMessage>}
       </ErrorMessage>
     </FormControl>
   )
