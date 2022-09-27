@@ -16,6 +16,7 @@ export default function SelectForm({ name, error, children, value }) {
           border="1px"
           borderColor="purple.500"
           borderRadius="xl"
+          boxShadow="md"
           size="sm"
           _hover={{
             borderColor: "purple.500"

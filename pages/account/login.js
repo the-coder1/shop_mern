@@ -68,7 +68,7 @@ function Content() {
             <FormContainer>
               {message && (
                 <SlideFade in={message} offsetY={-50}>
-                  <Alert status='error' mb={3} borderRadius="xl" boxShadow="md" w="75%" mx="auto">
+                  <Alert status='error' mb={3} borderRadius="xl" boxShadow="md" mx="auto">
                     <AlertIcon />
                     {message}
                   </Alert>

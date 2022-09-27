@@ -14,7 +14,7 @@ export default function Card({ value, width, height, dir, remove, addToCart }) {
         bg={background}
         boxShadow="md"
         borderRadius="xl"
-        direction={dir ? dir : ["row", "row"]}
+        direction={dir ? dir : "row"}
         align="center"
         mx={[1, 3, 5]}
         my={dir ? 5 : 2}
@@ -33,7 +33,7 @@ export default function Card({ value, width, height, dir, remove, addToCart }) {
       >
         <Link href={`/product/${value._id}`} passHref>
           <Flex
-            direction={dir ? dir : ["row", "row"]}
+            direction={dir ? dir : "row"}
             align="center"
           >
             <BoxImage
@@ -43,7 +43,7 @@ export default function Card({ value, width, height, dir, remove, addToCart }) {
             />
             <Box ml={dir ? 0 : [0, 5]} mt={2} px={2} w={200} color="purple.500">
               <Flex 
-                direction={dir ? "row" : ["row", "row"]}
+                direction={dir && "row"}
                 justify="space-between" 
                 align="center"
                 mt={!dir && [2, 0]}
@@ -62,16 +62,16 @@ export default function Card({ value, width, height, dir, remove, addToCart }) {
         </Link>
         {!dir && (
           <Flex 
-            direction={["column", "column"]} 
+            direction="column" 
             justify="space-around" 
             w={["100%"]}
             mt={[2, 0]}
           >
             <Button size="sm" m={1} onClick={remove}>
-              <Icon as={BsTrash} w={5} h={5} />
+              <Icon as={BsTrash} w={6} h={6} />
             </Button>
             <Button size="sm" m={1} onClick={addToCart}>
-              <Icon as={BsBagPlus} w={5} h={5} />
+              <Icon as={BsBagPlus} w={6} h={6} />
             </Button>
           </Flex>
         )}

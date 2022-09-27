@@ -125,7 +125,7 @@ function Content() {
               <FormContainer position="relative">
                 {message && (
                   <SlideFade in={message} offsetY={-50}>
-                    <Alert status='error' borderRadius="xl" boxShadow="md" w="75%" mx="auto">
+                    <Alert status='error' borderRadius="xl" boxShadow="md" mx="auto">
                       <AlertIcon />
                       {message}
                     </Alert>
@@ -141,9 +141,9 @@ function Content() {
                   left={3}
                   size="sm"
                 >
-                  <Icon as={BsArrowLeft} w={5} h={5} />
+                  <Icon as={BsArrowLeft} w={6} h={6} />
                 </Button>
-                <Flex w={["90%", "85%", "80%", "75%", "70%"]} mt={5}>
+                <Flex w={["90%", "85%", "80%", "75%", "70%"]} mt={10}>
                   <InputForm
                     name="name.first"
                     type="text"
@@ -191,12 +191,12 @@ function Content() {
           validationSchema={updatePassSchema}
           onSubmit={(values) => updatePass(values)}
         >
-          {({ errors }) => (
+          {({ errors, touched }) => (
             <SlideFade in={user} offsetY={-50}>
               <FormContainer position="relative">
                 {message && (
                   <SlideFade in={message} offsetY={-50}>
-                    <Alert status='error' borderRadius="xl" boxShadow="md" w="75%" mx="auto">
+                    <Alert status='error' borderRadius="xl" boxShadow="md" mx="auto">
                       <AlertIcon />
                       {message}
                     </Alert>
@@ -212,29 +212,30 @@ function Content() {
                   left={3}
                   size="sm"
                 >
-                  <Icon as={BsArrowLeft} w={5} h={5} />
+                  <Icon as={BsArrowLeft} w={6} h={6} />
                 </Button>
+                {console.log(errors)}
                 <InputForm
                   name="oldPassword"
                   type="password"
                   placeholder="Old password"
                   icon={BsLock}
-                  error={errors.oldPassword}
-                  mt={9}
+                  error={errors.oldPassword && touched.oldPassword ? errors.oldPassword : null}
+                  mt={12}
                 />
                 <InputForm
                   name="newPassword"
                   type="password"
                   placeholder="New password"
                   icon={BsLock}
-                  error={errors.newPassword}
+                  error={errors.newPassword && touched.newPassword ? errors.newPassword : null}
                 />
                 <InputForm
                   name="confirmNewPassword"
                   type="password"
                   placeholder="Confirm new password"
                   icon={BsLock}
-                  error={errors.confirmNewPassword}
+                  error={errors.confirmNewPassword && touched.confirmNewPassword ? errors.confirmNewPassword : null}
                 />
                 <Button type="submit" mt={3}>Update</Button>
               </FormContainer>
@@ -263,7 +264,7 @@ function Content() {
               right={5}
               size="sm"
             >
-              <Icon as={BsPencil} w={5} h={5} />
+              <Icon as={BsPencil} w={6} h={6} />
             </Button>
             <Heading
               as="h2" 

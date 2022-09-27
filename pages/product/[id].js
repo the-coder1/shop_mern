@@ -29,8 +29,10 @@ function Content({ id, data }) {
   const { user } = useUser()
   const { data: wish } = useSWR(id && `/api/wish/${id}`)
   const { mutate } = useSWRConfig()
-  const [showID, setShowID] = useState(false)
   const [postComment, setPostComment] = useState(false)
+  const [show, setShow] = useState(false)
+  const [showID, setShowID] = useState(false)
+
 
   const [smallDevice] = useMediaQuery("(min-width: 30em)")
 
@@ -48,6 +50,9 @@ function Content({ id, data }) {
         })
       })
     )
+    mutate(id && `/api/product/${id}`, () => {
+      fetcher(id && `/api/product/${id}`)
+    })
   }
 
   if (!data) return <Load />
@@ -86,7 +91,7 @@ function Content({ id, data }) {
                   <>
                     <Tooltip 
                       hasArrow 
-                      label={user?.auth ? "You must have an account!" : data?.stock === 0 ? "Sold out!" : "Add to wish list!"} 
+                      label={user?.auth ? "You must have an account!" : data?.stock === 0 ? "Sold out!" : "Add to cart list!"} 
                       shouldWrapChildren 
                       borderRadius="xl"
                       boxShadow="md"
@@ -318,40 +323,85 @@ function Content({ id, data }) {
           </SlideFade>
 
           <Flex direction="column" w={["90%", "75%", "60%", "50%", "40%"]}>
-            {user && data.reviews.map((review, index) => (
-              <SlideFade in={review} offsetY={-50} key={index}>
-                <Box 
-                  bg={background}
-                  boxShadow="lg"
-                  borderRadius="xl"
-                  m={3}
-                  p={5}
-                  w="100%"
-                  color="purple.500"
-                >
-                  <Flex align="center" mb={2} wrap="wrap">
-                    {showID ? (
-                      <Text mr={2}>
-                        <Icon as={BsHash} w={5} h={5} mb={-1} />{review.user}
+            {user && data.reviews.map((review, index) => {
+              if (review.user === user._id) {
+                return (
+                  <SlideFade in={review} offsetY={-50} key={index}>
+                    <Box 
+                      bg={useColorModeValue("blackAlpha.200", "whiteAlpha.200")}
+                      boxShadow="lg"
+                      borderRadius="xl"
+                      m={3}
+                      p={5}
+                      w="100%"
+                      color="purple.500"
+                      border="1px"
+                      position="relative"
+                    >
+                      <Flex align="center" mb={2} wrap="wrap">
+                        {show ? (
+                          <Text mr={2}>
+                            <Icon as={BsHash} w={5} h={5} mb={-1} />{review.user}
+                          </Text>
+                        ) : (
+                          <Text mr={2}>
+                            <Icon as={BsPersonFill} w={5} h={5} mr={2} mb={-1} />{review.name}
+                          </Text>
+                        )}
+                        <Button size="sm" my={2} onClick={() => setShow(!show)}>{show ? "show person" : "show ID"}</Button>
+                      </Flex>
+                      <Text mb={4}>
+                        <Icon as={BsFillChatTextFill} w={5} h={5} mr={2} mb={-1} />{review.comment}
                       </Text>
-                    ) : (
-                      <Text mr={2}>
-                        <Icon as={BsPersonFill} w={5} h={5} mr={2} mb={-1} />{review.name}
+                      <Rating
+                        value={review.rating}
+                      />
+                      <Box position="absolute" bottom={7} right={7}>
+                        <Text fontSize="sm">Your review</Text>
+                      </Box>
+                    </Box>
+                  </SlideFade>
+                )
+              }
+            })}
+
+            {user && data.reviews.map((review, index) => {
+              if (review.user !== user._id) {
+                return (
+                  <SlideFade in={review} offsetY={-50} key={index}>
+                    <Box 
+                      bg={background}
+                      boxShadow="lg"
+                      borderRadius="xl"
+                      m={3}
+                      p={5}
+                      w="100%"
+                      color="purple.500"
+                    >
+                      <Flex align="center" mb={2} wrap="wrap">
+                        {showID ? (
+                          <Text mr={2}>
+                            <Icon as={BsHash} w={5} h={5} mb={-1} />{review.user}
+                          </Text>
+                        ) : (
+                          <Text mr={2}>
+                            <Icon as={BsPersonFill} w={5} h={5} mr={2} mb={-1} />{review.name}
+                          </Text>
+                        )}
+                        <Button size="sm" my={2} onClick={() => setShowID(!showID)}>{showID ? "show person" : "show ID"}</Button>
+                      </Flex>
+                      <Text mb={4}>
+                        <Icon as={BsFillChatTextFill} w={5} h={5} mr={2} mb={-1} />{review.comment}
                       </Text>
-                    )}
-                    <Button size="sm" my={2} onClick={() => setShowID(!showID)}>{showID ? "show person" : "show ID"}</Button>
-                  </Flex>
-                  <Text mb={4}>
-                    <Icon as={BsFillChatTextFill} w={5} h={5} mr={2} mb={-1} />{review.comment}
-                  </Text>
-                  <Rating
-                    value={review.rating}
-                  />
-                </Box>
-              </SlideFade>
-            ))}
+                      <Rating
+                        value={review.rating}
+                      />
+                    </Box>
+                  </SlideFade>
+                )
+              }
+            })}
           </Flex>
-          {console.log(postComment)}
 
           {user?.auth ? (
             <SlideFade in={user} offsetY={-50}>
@@ -370,6 +420,8 @@ function Content({ id, data }) {
                 </Link>
               </Box>
             </SlideFade>
+          ) : data?.reviews.filter(review => review.user === user?._id).length > 0 ? (
+            null
           ) : !postComment ? (
             <SlideFade in={user} offsetY={-50}>
               <Box 

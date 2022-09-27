@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       } else {
         const review = {
           user: user._id,
-          name: user.name,
+          name: user.name.first + " " + user.name.last,
           rating: Number(rating),
           comment
         }

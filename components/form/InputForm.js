@@ -28,6 +28,7 @@ export default function InputForm ({ children, name, type, placeholder, as, size
             pl={10}
             border="1px"
             borderColor="purple.500"
+            boxShadow="md"
             borderRadius="xl"
             size={size}
             
