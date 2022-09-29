@@ -4,10 +4,10 @@ import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPane
 import { useRouter } from "next/router";
 import { Form, Formik } from "formik";
 import * as yup from "yup"
-import { BsCartPlus, BsCheck2All, BsCollection, BsFillChatTextFill, BsFillForwardFill, BsFillHeartFill, BsHash, BsHeart, BsLock, BsPatchExclamationFill, BsPersonFill } from "react-icons/bs";
+import { BsCartPlus, BsChatText, BsCheck2All, BsCollection, BsFillChatTextFill, BsFillForwardFill, BsFillHeartFill, BsHash, BsHeart, BsLock, BsPatchExclamationFill, BsPersonFill } from "react-icons/bs";
 import { fetcher } from "../../utils/api";
 import { useUser } from "../../utils/user"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BoxImage from "../../components/BoxImage"
 import Rating from '../../components/product/Rating'
 import Load from "../../components/Load"
@@ -32,7 +32,6 @@ function Content({ id, data }) {
   const [postComment, setPostComment] = useState(false)
   const [show, setShow] = useState(false)
   const [showID, setShowID] = useState(false)
-
 
   const [smallDevice] = useMediaQuery("(min-width: 30em)")
 
@@ -117,16 +116,16 @@ function Content({ id, data }) {
                       motionPreset="slideInBottom"
                     >
                       <ModalOverlay backdropFilter="auto" backdropBlur="2px" />
-                      <ModalContent color="purple.500">
-                        <ModalHeader>Select the quantity</ModalHeader>
-                        <ModalCloseButton size="lg" />
+                      <ModalContent>
+                        <ModalHeader color="purple.500">Select the quantity</ModalHeader>
+                        <ModalCloseButton size="lg" color="purple.500" />
                         <Formik
                           initialValues={{
-                            quantity: 0
+                            quantity: 1
                           }}
                           onSubmit={(values) => addToCart(values)}
                         >
-                          {({ errors, touched }) => (
+                          {({ values, errors, touched }) => (
                             <Form>
                               <ModalBody>
                                 {user?.message && (<Text color="red.500">{user.message}</Text>)}
@@ -135,10 +134,13 @@ function Content({ id, data }) {
                                   name="quantity"
                                   error={errors.quantity && touched.quantity ? errors.quantity : null}
                                   icon={BsCollection}
+                                  value={values.quantity}
+                                  stock={data.stock}
+                                  mx="auto"
                                 />
                               </ModalBody>
                               <ModalFooter>
-                                <Button colorScheme='gray' color="black" mr={3} onClick={onClose}>
+                                <Button colorScheme="gray" mr={3} onClick={onClose}>
                                   Close
                                 </Button>
                                 <Button type="submit">Add to cart</Button>
@@ -357,7 +359,7 @@ function Content({ id, data }) {
                         value={review.rating}
                       />
                       <Box position="absolute" bottom={7} right={7}>
-                        <Text fontSize="sm">Your review</Text>
+                        <Text fontSize="sm" fontWeight="500">Your review</Text>
                       </Box>
                     </Box>
                   </SlideFade>

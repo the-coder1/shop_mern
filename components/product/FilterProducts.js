@@ -1,5 +1,5 @@
-import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Icon, Menu, MenuButton, MenuItem, MenuList, RangeSlider, RangeSliderFilledTrack, RangeSliderThumb, RangeSliderTrack, SlideFade, Text, useDisclosure, useMediaQuery } from "@chakra-ui/react"
-import { useState } from "react"
+import { Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Icon, Menu, MenuButton, MenuItem, MenuList, RangeSlider, RangeSliderFilledTrack, RangeSliderThumb, RangeSliderTrack, SlideFade, Text, useDisclosure, useMediaQuery } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
 import { BsArrowClockwise, BsArrowDownUp, BsCurrencyDollar, BsFilter, BsFunnel, BsSortAlphaDown, BsSortAlphaUp, BsSortDownAlt, BsSortUpAlt } from "react-icons/bs"
 
 function SortProducts({ products, setProducts }) {
@@ -44,32 +44,36 @@ function SortProducts({ products, setProducts }) {
           Sort
         </MenuButton>
       </SlideFade>
-      <MenuList color="purple.500">
-        <MenuItem 
-          onClick={() => sortAsc()}
-        >
-          <Icon as={BsSortAlphaDown} w={5} h={5} mr={2} />The ascending order
-        </MenuItem>
-        <MenuItem 
-          onClick={() => sortDesc()}
-        >
-          <Icon as={BsSortAlphaUp} w={5} h={5} mr={2} />The descending order</MenuItem>
-        <MenuItem 
-          onClick={() => sortLow()}
-        >
-          <Icon as={BsSortDownAlt} w={5} h={5} mr={2} />The lowest price</MenuItem>
-        <MenuItem 
-          onClick={() => sortHigh()}
-        >
-          <Icon as={BsSortUpAlt} w={5} h={5} mr={2} />The highest price</MenuItem>
+      <MenuList color="purple.500" py={!products?.length > 0 && 3} px={!products?.length > 0 && 5}>
+        {products.length > 0 ? (
+          <>
+            <MenuItem 
+              onClick={() => sortAsc()}
+            >
+              <Icon as={BsSortAlphaDown} w={5} h={5} mr={2} />The ascending order
+            </MenuItem>
+            <MenuItem 
+              onClick={() => sortDesc()}
+            >
+              <Icon as={BsSortAlphaUp} w={5} h={5} mr={2} />The descending order</MenuItem>
+            <MenuItem 
+              onClick={() => sortLow()}
+            >
+              <Icon as={BsSortDownAlt} w={5} h={5} mr={2} />The lowest price</MenuItem>
+            <MenuItem 
+              onClick={() => sortHigh()}
+            >
+              <Icon as={BsSortUpAlt} w={5} h={5} mr={2} />The highest price</MenuItem>
+          </>
+        ) : (
+          <Text>No products to sort...</Text>
+        )}
       </MenuList>
     </Menu>
   )
 }
 
-function PriceProducts({ data, products, setProducts, maxPrice, setMaxPrice }) {
-  const [minPrice, setMinPrice] = useState(0)
-
+function PriceProducts({ data, products, setProducts, minPrice, setMinPrice, maxPrice, setMaxPrice }) {
   function filterPrice(price) {
     const result = data.filter((item) => {
       return item.price >= price[0] && item.price <= price[1]
@@ -88,38 +92,43 @@ function PriceProducts({ data, products, setProducts, maxPrice, setMaxPrice }) {
         </MenuButton>
       </SlideFade>
       <MenuList color="purple.500" py={3} px={5}>
-        <Flex justify="space-between">
-          <Text>{minPrice} RON</Text>
-          <Text>{maxPrice} RON</Text>
-        </Flex>
-        <RangeSlider
-          value={[0, maxPrice]}
-          min={0}
-          max={data.reduce((a, b) => a.price > b.price ? a : b).price}
-          onChange={(val) => {
-            filterPrice(val)
-            setMinPrice(val[0])
-            setMaxPrice(val[1])
-          }}
-          colorScheme="purple"
-          
-        >
-          <RangeSliderTrack>
-            <RangeSliderFilledTrack />
-          </RangeSliderTrack>
-          <RangeSliderThumb index={0} />
-          <RangeSliderThumb index={1} />
-        </RangeSlider>
+        {minPrice !== maxPrice ? (
+          <>
+            <Flex justify="space-between" mb={1}>
+              <Text ml={-2}>{minPrice} RON</Text>
+              <Text mr={-2}>{maxPrice} RON</Text>
+            </Flex>
+            <RangeSlider
+              value={[minPrice, maxPrice]}
+              min={0}
+              max={data?.length > 0 && data.reduce((a, b) => a.price > b.price ? a : b).price}
+              onChange={(val) => {
+                filterPrice(val)
+                setMinPrice(val[0])
+                setMaxPrice(val[1])
+              }}
+              colorScheme="purple"
+            >
+              <RangeSliderTrack>
+                <RangeSliderFilledTrack />
+              </RangeSliderTrack>
+              <RangeSliderThumb index={0} />
+              <RangeSliderThumb index={1} />
+            </RangeSlider>
+          </>
+        ) : (
+          <Text ml={3}>No prices...</Text>
+        )}
       </MenuList>
     </Menu>
   )
 }
 
-function FormatProducts({ data, products, setProducts, maxPrice, setMaxPrice }) {
-  const formats = products.map(prod => prod.format)
+function FormatProducts({ data, products, setProducts, setMaxPrice }) {
+  const formats = data?.map(prod => prod.format)
                       .map((elem, index, final) => final.indexOf(elem) === index && index)
-                      .filter(elem => products[elem])
-                      .map(elem => products[elem].format)
+                      .filter(elem => data[elem])
+                      .map(elem => data[elem].format)
 
   function filterFormat(product) {
     const result = data.filter((item) => {
@@ -142,25 +151,36 @@ function FormatProducts({ data, products, setProducts, maxPrice, setMaxPrice }) 
           Format
         </MenuButton>
       </SlideFade>
-      <MenuList color="purple.500">
-        {formats.map((value, index) => (
-          <MenuItem
-            key={index}
-            onClick={() => filterFormat(value)}
-          >{value} ml</MenuItem>
-        ))}
+      <MenuList color="purple.500" py={!formats?.length > 0 && 3} px={!formats?.length > 0 && 5}>
+        {formats?.length > 0 ? (
+          formats?.map((value, index) => (
+            <MenuItem
+              key={index}
+              onClick={() => filterFormat(value)}
+            >{value} ml</MenuItem>
+          ))
+        ) : (
+          <Text ml={3}>No formats...</Text>
+        )}
       </MenuList>
     </Menu>
   )
 }
 
 export default function FilterProducts({ data, products, setProducts }) {
+  const [minPrice, setMinPrice] = useState(0)
   const [maxPrice, setMaxPrice] = useState(products.length !== 0 && products.reduce((a, b) => a.price > b.price ? a : b).price)
-  const [isLargerThan30em] = useMediaQuery("(min-width: 30em)")
+  const [isLargerThan48em] = useMediaQuery("(min-width: 48em)")
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  useEffect(() => {
+    setMaxPrice(data?.length ? data.reduce((a, b) => a.price > b.price ? a : b).price : 0)
+  }, [data])
 
   function resetValues() {
     setProducts(data)
+    setMinPrice(0)
+    setMaxPrice(data.length !== 0 && data.reduce((a, b) => a.price > b.price ? a : b).price)
   }
 
   return (
@@ -168,7 +188,7 @@ export default function FilterProducts({ data, products, setProducts }) {
       direction={["column", "row"]}
       align={["start", "center"]}
     >
-      {!isLargerThan30em ? (
+      {!isLargerThan48em ? (
         <>
           <Button 
             onClick={() => onOpen()}
@@ -189,6 +209,8 @@ export default function FilterProducts({ data, products, setProducts }) {
                   data={data}
                   products={products}
                   setProducts={setProducts}
+                  minPrice={minPrice}
+                  setMinPrice={setMinPrice}
                   maxPrice={maxPrice}
                   setMaxPrice={setMaxPrice}
                 />
@@ -196,7 +218,7 @@ export default function FilterProducts({ data, products, setProducts }) {
                   data={data}
                   products={products}
                   setProducts={setProducts}
-                  maxPrice={maxPrice}
+                  setMinPrice={setMinPrice}
                   setMaxPrice={setMaxPrice}
                 />
                 <SlideFade in={products} offsetY={-50}>
@@ -216,6 +238,8 @@ export default function FilterProducts({ data, products, setProducts }) {
             data={data}
             products={products}
             setProducts={setProducts}
+            minPrice={minPrice}
+            setMinPrice={setMinPrice}
             maxPrice={maxPrice}
             setMaxPrice={setMaxPrice}
           />
@@ -223,7 +247,7 @@ export default function FilterProducts({ data, products, setProducts }) {
             data={data}
             products={products}
             setProducts={setProducts}
-            maxPrice={maxPrice}
+            setMinPrice={setMinPrice}
             setMaxPrice={setMaxPrice}
           />
           <SlideFade in={products} offsetY={-50}>
